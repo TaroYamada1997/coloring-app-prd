@@ -16,9 +16,8 @@ const SplashScreen: React.FC<SplashScreenProps> = ({
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsAnimating(false);
-      setTimeout(onComplete, 800); // アニメーション完了後にコールバックを実行
-    }, 2000);
-
+      setTimeout(onComplete, 1000);
+    }, 2800);
     return () => clearTimeout(timer);
   }, [onComplete]);
 
@@ -26,7 +25,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({
     <AnimatePresence>
       {isAnimating && (
         <motion.div
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-purple-100"
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-blue-50 via-purple-50 to-purple-100"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.8, ease: 'easeInOut' }}
@@ -35,7 +34,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="relative w-40 h-40 mb-8"
+            className="relative w-28 h-28 mb-10 -mt-20"
           >
             <Image
               src={logoPath}
@@ -46,30 +45,34 @@ const SplashScreen: React.FC<SplashScreenProps> = ({
             />
           </motion.div>
 
-          <motion.h1
+          {/* あなたの色は何色？ */}
+          <motion.h2
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
-            className="text-2xl font-bold text-gray-800 mb-2"
+            transition={{ duration: 0.5, delay: 0.6 }}
+            className="text-2xl md:text-3xl font-semibold text-indigo-300 mb-6 text-center"
           >
-            Origina
-          </motion.h1>
+            あなたの色は何色？
+          </motion.h2>
 
-          <motion.p
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.7 }}
-            className="text-gray-600 text-center px-8"
-          >
-            あなただけのオリジナルぬりえを楽しもう
-          </motion.p>
-
+          {/* グラデーション横線 */}
           <motion.div
             initial={{ scaleX: 0 }}
             animate={{ scaleX: 1 }}
-            transition={{ duration: 1.5, delay: 0.3, ease: 'easeInOut' }}
-            className="w-40 h-1 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full mt-8"
+            transition={{ duration: 1.2, delay: 0.8, ease: 'easeInOut' }}
+            className="w-48 h-1 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full mb-16"
+            style={{ transformOrigin: 'left' }}
           />
+
+          {/* フッター */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 1.2 }}
+            className="text-gray-400 text-sm mt-8"
+          >
+            ©2025 Origina.
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>

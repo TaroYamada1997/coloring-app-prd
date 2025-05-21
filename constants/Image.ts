@@ -1,22 +1,22 @@
 export const COLORINGMAP = {
   '1': {
-    path: '/ぬりえイラスト_背景透過_完成.jpg',
+    path: '/IMG_2691.PNG',
     title: 'JPG表紙イラスト',
   },
   '2': {
-    path: 'https://d3qjs1ouhpcrig.cloudfront.net/ぬりえイラスト20250417_2.png',
+    path: '/IMG_2691.PNG',
     title: 'ぬりえイラスト',
   },
   '3': {
-    path: '/PNG背景白あり.png',
+    path: '/IMG_2691.PNG',
     title: 'PNG背景白あり',
   },
   '4': {
-    path: '/PNG背景透過.png',
+    path: '/IMG_2691.PNG',
     title: 'PNG背景透過',
   },
   '5': {
-    path: '/ten-sample背景透過.png',
+    path: '/IMG_2691.PNG',
     title: 'PNG実践クッキリ背景透過',
   },
 } as const;

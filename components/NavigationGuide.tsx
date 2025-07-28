@@ -23,45 +23,45 @@ const NavigationGuide: React.FC<NavigationGuideProps> = ({
 
   const guideSteps = [
     {
-      title: '基本操作',
-      content: '基本的な操作方法を説明します。\n\n推奨環境: iOS 18以上',
-      icon: <Hand className="w-12 h-12 text-blue-500 mx-auto mb-4" />,
+      title: '🎨 ぬりえのつかいかた',
+      content: 'たのしいぬりえのつかいかたを\nおしえるよ！\n\nいっしょにおぼえよう✨',
+      icon: <Hand className="w-12 h-12 text-purple-500 mx-auto mb-4" />,
     },
     {
-      title: '色の選択',
+      title: '🌈 いろをえらぼう',
       content:
-        'パレットアイコンをタップすると、\nカラーパレットが表示されます。\n季節ごとのカラーやオリジナルカラーを\n選択できます。',
-      icon: <Palette className="w-12 h-12 text-blue-500 mx-auto mb-4" />,
+        'パレットのマークをタッチすると、\nきれいないろがたくさんでてくるよ！\nすきないろをえらんでね😊',
+      icon: <Palette className="w-12 h-12 text-pink-500 mx-auto mb-4" />,
     },
     {
-      title: '拡大・縮小',
+      title: '🔍 おおきくしてみよう',
       content:
-        '画面上で2本の指を広げると拡大、\n縮めると縮小できます。\n細かい部分も塗りやすくなります。',
+        'ゆびを2ほんつかって、がめんを\nひろげると、ぬりえがおおきくなるよ！\nちいさいところもぬりやすくなるね🎯',
       icon: <ZoomIn className="w-12 h-12 text-blue-500 mx-auto mb-4" />,
     },
     {
-      title: '移動',
+      title: '👆 がめんをうごかそう',
       content:
-        '拡大した状態で1本の指でドラッグすると、\nキャンバスを移動できます。\n画面の端まで見ることができます。',
-      icon: <Move className="w-12 h-12 text-blue-500 mx-auto mb-4" />,
+        'おおきくしたあと、ゆび1ぽんで\nがめんをうごかせるよ！\nいろんなところがみえるね👀',
+      icon: <Move className="w-12 h-12 text-green-500 mx-auto mb-4" />,
     },
     {
-      title: '元に戻す・やり直し',
+      title: '↩️ まちがえてもだいじょうぶ',
       content:
-        '左上の矢印ボタンで操作を元に戻したり、\nやり直したりできます。\n間違えても安心です。',
-      icon: <ChevronLeft className="w-12 h-12 text-blue-500 mx-auto mb-4" />,
+        'ひだりうえのやじるしボタンをおすと、\nまえにもどったり、やりなおしたり\nできるよ。あんしんしてね💖',
+      icon: <ChevronLeft className="w-12 h-12 text-orange-500 mx-auto mb-4" />,
     },
     {
-      title: 'リセット',
+      title: '🔄 さいしょからやりなおし',
       content:
-        '左上の回転矢印ボタンをタップすると、\n塗り絵を最初の状態に戻すことができます。',
-      icon: <RotateCcw className="w-12 h-12 text-blue-500 mx-auto mb-4" />,
+        'ひだりうえのくるくるボタンをおすと、\nぬりえがさいしょのじょうたいに\nもどるよ！',
+      icon: <RotateCcw className="w-12 h-12 text-red-500 mx-auto mb-4" />,
     },
     {
-      title: '保存',
+      title: '💾 さくひんをほぞんしよう',
       content:
-        '右上のダウンロードボタンをタップすると、\n完成した塗り絵を保存できます。\n友達にシェアしましょう！',
-      icon: <Download className="w-12 h-12 text-blue-500 mx-auto mb-4" />,
+        'みぎうえのダウンロードボタンをおすと、\nできあがったぬりえをほぞんできるよ！\nおうちのひとにみせてあげよう🎉',
+      icon: <Download className="w-12 h-12 text-teal-500 mx-auto mb-4" />,
     },
   ];
 
@@ -97,9 +97,9 @@ const NavigationGuide: React.FC<NavigationGuideProps> = ({
         </button>
 
         {/* プログレスバー */}
-        <div className="w-full h-1 bg-gray-200 rounded-full mb-6 mt-6">
+        <div className="w-full h-2 bg-gray-200 rounded-full mb-6 mt-6">
           <div
-            className="h-1 bg-blue-500 rounded-full transition-all duration-300"
+            className="h-2 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full transition-all duration-300"
             style={{
               width: `${(currentStep / (guideSteps.length - 1)) * 100}%`,
             }}
@@ -127,17 +127,17 @@ const NavigationGuide: React.FC<NavigationGuideProps> = ({
             className={`px-4 py-2 rounded-lg ${
               currentStep === 0
                 ? 'text-gray-400 cursor-not-allowed'
-                : 'text-blue-500'
+                : 'text-purple-500'
             }`}
             disabled={currentStep === 0}
           >
-            前へ
+            ◀ まえ
           </button>
           <button
             onClick={nextStep}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg"
+            className="px-4 py-2 bg-purple-500 text-white rounded-lg"
           >
-            {currentStep === guideSteps.length - 1 ? '完了' : '次へ'}
+            {currentStep === guideSteps.length - 1 ? '🎉 できた！' : 'つぎ ▶'}
           </button>
         </div>
       </div>

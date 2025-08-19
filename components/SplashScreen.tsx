@@ -45,7 +45,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({
     <AnimatePresence>
       {isAnimating && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 overflow-hidden"
+          className="fixed inset-0 z-50 flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-50 via-slate-50 to-gray-100 overflow-hidden"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.6, ease: 'easeInOut' }}
@@ -75,7 +75,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({
             />
           </motion.div>
 
-          {/* キャンバス部分にズームインしてロゴを表示 */}
+          {/* キャンバス画像の下にロゴを表示 */}
           <motion.div
             initial={{ scale: 0, opacity: 0 }}
             animate={currentPhase >= 2 ? { 
@@ -87,14 +87,14 @@ const SplashScreen: React.FC<SplashScreenProps> = ({
               ease: "easeOut",
               times: [0, 0.6, 1]
             }}
-            className="absolute z-30 bg-white rounded-xl shadow-2xl p-8 border-4 border-gray-100 mb-40"
-            style={{ transform: 'translateY(-50px)' }}
+            className="absolute bottom-40 z-30"
+            style={{ transform: 'translateX(-50%)' }}
           >
             <Image
               src={logoPath}
               alt="Origina Logo"
-              width={80}
-              height={80}
+              width={60}
+              height={60}
               className="object-contain"
             />
           </motion.div>
@@ -127,8 +127,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({
                 backgroundColor: [
                   '#ff6b9d', '#ffd93d', '#6bcf7f', '#4ecdc4', 
                   '#45b7d1', '#96ceb4', '#ffeaa7', '#fab1a0'
-                ][i % 8],
-                filter: 'blur(0.5px)'
+                ][i % 8]
               }}
             ></motion.div>
           ))}
@@ -140,29 +139,29 @@ const SplashScreen: React.FC<SplashScreenProps> = ({
                 initial={{ scale: 0, opacity: 0.8 }}
                 animate={{ scale: 3, opacity: 0 }}
                 transition={{ duration: 2, ease: "easeOut" }}
-                className="absolute inset-0 bg-gradient-radial from-pink-200 via-orange-100 to-transparent rounded-full"
+                className="absolute inset-0 bg-gradient-radial from-gray-200 via-slate-100 to-transparent rounded-full"
               ></motion.div>
               <motion.div
                 initial={{ scale: 0, opacity: 0.6 }}
                 animate={{ scale: 4, opacity: 0 }}
                 transition={{ duration: 2.5, ease: "easeOut", delay: 0.3 }}
-                className="absolute inset-0 bg-gradient-radial from-purple-200 via-blue-100 to-transparent rounded-full"
+                className="absolute inset-0 bg-gradient-radial from-slate-200 via-gray-100 to-transparent rounded-full"
               ></motion.div>
             </>
           )}
 
           {/* メッセージ */}
           <motion.div
-            initial={{ y: 100, opacity: 0 }}
-            animate={currentPhase >= 3 ? { y: -80, opacity: 1 } : {}}
+            initial={{ y: -100, opacity: 0 }}
+            animate={currentPhase >= 3 ? { y: 0, opacity: 1 } : {}}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="absolute bottom-16 text-center z-40"
+            className="absolute top-16 text-center z-40"
           >
             <motion.h2
               initial={{ scale: 0.8 }}
               animate={currentPhase >= 3 ? { scale: 1 } : {}}
               transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
-              className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 mb-2"
+              className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-gray-600 to-slate-700 mb-2"
             >
               🎨 ぬりえのせかいへ
             </motion.h2>
@@ -184,27 +183,27 @@ const SplashScreen: React.FC<SplashScreenProps> = ({
                 initial={{ x: -100, y: 0, opacity: 0 }}
                 animate={{ x: 0, y: -20, opacity: [0, 1, 0] }}
                 transition={{ duration: 2, ease: "easeOut", delay: 1 }}
-                className="absolute left-10 top-1/3 w-4 h-4 bg-green-400 rounded-full blur-sm"
+                className="absolute left-10 top-1/3 w-4 h-4 bg-green-400 rounded-full"
               ></motion.div>
               {/* 右から */}
               <motion.div
                 initial={{ x: 100, y: 0, opacity: 0 }}
                 animate={{ x: 0, y: -15, opacity: [0, 1, 0] }}
                 transition={{ duration: 2, ease: "easeOut", delay: 1.2 }}
-                className="absolute right-10 top-1/2 w-3 h-3 bg-orange-400 rounded-full blur-sm"
+                className="absolute right-10 top-1/2 w-3 h-3 bg-orange-400 rounded-full"
               ></motion.div>
               {/* 下から */}
               <motion.div
                 initial={{ x: 0, y: 80, opacity: 0 }}
                 animate={{ x: -10, y: 0, opacity: [0, 1, 0] }}
                 transition={{ duration: 2, ease: "easeOut", delay: 1.4 }}
-                className="absolute left-1/3 bottom-1/3 w-3 h-3 bg-blue-400 rounded-full blur-sm"
+                className="absolute left-1/3 bottom-1/3 w-3 h-3 bg-blue-400 rounded-full"
               ></motion.div>
               <motion.div
                 initial={{ x: 0, y: 80, opacity: 0 }}
                 animate={{ x: 15, y: 0, opacity: [0, 1, 0] }}
                 transition={{ duration: 2, ease: "easeOut", delay: 1.6 }}
-                className="absolute right-1/3 bottom-1/3 w-4 h-4 bg-red-400 rounded-full blur-sm"
+                className="absolute right-1/3 bottom-1/3 w-4 h-4 bg-red-400 rounded-full"
               ></motion.div>
             </>
           )}

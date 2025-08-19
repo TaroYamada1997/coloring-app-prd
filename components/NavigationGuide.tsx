@@ -23,44 +23,44 @@ const NavigationGuide: React.FC<NavigationGuideProps> = ({
 
   const guideSteps = [
     {
-      title: '🎨 ぬりえのつかいかた',
-      content: 'たのしいぬりえのつかいかたを\nおしえるよ！\n\nいっしょにおぼえよう✨',
+      title: 'ぬりえのつかいかた',
+      content: '楽しいぬりえのつかいかたを\nおしえるよ！\n\nいっしょにおぼえよう✨',
       icon: <Hand className="w-12 h-12 text-purple-500 mx-auto mb-4" />,
     },
     {
-      title: '🌈 いろをえらぼう',
+      title: 'いろをえらぼう',
       content:
         'パレットのマークをタッチすると、\nきれいないろがたくさんでてくるよ！\nすきないろをえらんでね😊',
       icon: <Palette className="w-12 h-12 text-pink-500 mx-auto mb-4" />,
     },
     {
-      title: '🔍 おおきくしてみよう',
+      title: '大きくしてみよう',
       content:
-        'ゆびを2ほんつかって、がめんを\nひろげると、ぬりえがおおきくなるよ！\nちいさいところもぬりやすくなるね🎯',
+        'ゆびを2本つかって、がめんを\nひろげると、ぬりえが大きくなるよ！\n小さいところもぬりやすくなるね🎯',
       icon: <ZoomIn className="w-12 h-12 text-blue-500 mx-auto mb-4" />,
     },
     {
-      title: '👆 がめんをうごかそう',
+      title: 'がめんをうごかそう',
       content:
-        'おおきくしたあと、ゆび1ぽんで\nがめんをうごかせるよ！\nいろんなところがみえるね👀',
+        '大きくしたあと、ゆび1ぽんで\nがめんをうごかせるよ！\nいろんなところがみえるね👀',
       icon: <Move className="w-12 h-12 text-green-500 mx-auto mb-4" />,
     },
     {
-      title: '↩️ まちがえてもだいじょうぶ',
+      title: 'まちがえてもだいじょうぶ',
       content:
-        'ひだりうえのやじるしボタンをおすと、\nまえにもどったり、やりなおしたり\nできるよ。あんしんしてね💖',
+        '左上のやじるしボタンをおすと、\n前にもどったり、やりなおしたり\nできるよ。あんしんしてね',
       icon: <ChevronLeft className="w-12 h-12 text-orange-500 mx-auto mb-4" />,
     },
     {
-      title: '🔄 さいしょからやりなおし',
+      title: 'さいしょからやりなおし',
       content:
-        'ひだりうえのくるくるボタンをおすと、\nぬりえがさいしょのじょうたいに\nもどるよ！',
+        '左上のくるくるボタンをおすと、\nぬりえがさいしょのじょうたいに\nもどるよ！',
       icon: <RotateCcw className="w-12 h-12 text-red-500 mx-auto mb-4" />,
     },
     {
-      title: '💾 さくひんをほぞんしよう',
+      title: 'さくひんをほぞんしよう',
       content:
-        'みぎうえのダウンロードボタンをおすと、\nできあがったぬりえをほぞんできるよ！\nおうちのひとにみせてあげよう🎉',
+        '右上のダウンロードボタンをおすと、\nできあがったぬりえをほぞんできるよ！\nおうちのひとにみせてあげよう🎉',
       icon: <Download className="w-12 h-12 text-teal-500 mx-auto mb-4" />,
     },
   ];
@@ -99,7 +99,7 @@ const NavigationGuide: React.FC<NavigationGuideProps> = ({
         {/* プログレスバー */}
         <div className="w-full h-2 bg-gray-200 rounded-full mb-6 mt-6">
           <div
-            className="h-2 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full transition-all duration-300"
+            className="h-2 bg-gradient-to-r from-gray-400 to-slate-500 rounded-full transition-all duration-300"
             style={{
               width: `${(currentStep / (guideSteps.length - 1)) * 100}%`,
             }}
@@ -127,7 +127,7 @@ const NavigationGuide: React.FC<NavigationGuideProps> = ({
             className={`px-4 py-2 rounded-lg ${
               currentStep === 0
                 ? 'text-gray-400 cursor-not-allowed'
-                : 'text-purple-500'
+                : 'text-gray-600'
             }`}
             disabled={currentStep === 0}
           >
@@ -135,7 +135,7 @@ const NavigationGuide: React.FC<NavigationGuideProps> = ({
           </button>
           <button
             onClick={nextStep}
-            className="px-4 py-2 bg-purple-500 text-white rounded-lg"
+            className="px-4 py-2 bg-gray-600 text-white rounded-lg"
           >
             {currentStep === guideSteps.length - 1 ? '🎉 できた！' : 'つぎ ▶'}
           </button>

@@ -1,26 +1,16 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { Palette, Star } from 'lucide-react';
-import { COLORINGMAP } from '@/constants/Image';
 
 interface TopPageProps {
   onSelectColoring: (id: string) => void;
 }
-
-const difficultyConfig = {
-  easy: { label: 'かんたん', color: 'bg-green-100 text-green-700', stars: 1 },
-  medium: { label: 'ふつう', color: 'bg-yellow-100 text-yellow-700', stars: 2 },
-  hard: { label: 'むずかしい', color: 'bg-red-100 text-red-700', stars: 3 },
-};
 
 const categoryConfig = {
   human: { name: 'ひと', icon: '/human.png' },
   flower: { name: 'はな', icon: '/flower.png' },
   building: { name: 'たてもの', icon: '/building.png' },
 };
-
-type Category = keyof typeof categoryConfig;
 
 const TopPage: React.FC<TopPageProps> = ({ onSelectColoring }) => {
 

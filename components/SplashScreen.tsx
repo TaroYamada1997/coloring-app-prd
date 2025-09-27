@@ -75,10 +75,35 @@ const SplashScreen: React.FC<SplashScreenProps> = ({
             />
           </motion.div>
 
-          {/* キャンバス画像の下にロゴを表示 */}
+          {/* メッセージ（先に表示）*/}
+          <motion.div
+            initial={{ y: -100, opacity: 0 }}
+            animate={currentPhase >= 2 ? { y: 0, opacity: 1 } : {}}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="absolute top-16 text-center z-40"
+          >
+            <motion.h2
+              initial={{ scale: 0.8 }}
+              animate={currentPhase >= 2 ? { scale: 1 } : {}}
+              transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
+              className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-gray-600 to-slate-700 mb-2"
+            >
+              ぬりえのせかいへ
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={currentPhase >= 2 ? { opacity: 1 } : {}}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="text-gray-600 text-lg"
+            >
+              あなたのいろでぬってみよう！
+            </motion.p>
+          </motion.div>
+
+          {/* キャンバス画像の下にロゴを表示（後から表示）*/}
           <motion.div
             initial={{ scale: 0, opacity: 0 }}
-            animate={currentPhase >= 2 ? { 
+            animate={currentPhase >= 3 ? { 
               scale: [0, 1.2, 1], 
               opacity: [0, 1, 1] 
             } : {}}
@@ -150,30 +175,6 @@ const SplashScreen: React.FC<SplashScreenProps> = ({
             </>
           )}
 
-          {/* メッセージ */}
-          <motion.div
-            initial={{ y: -100, opacity: 0 }}
-            animate={currentPhase >= 3 ? { y: 0, opacity: 1 } : {}}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="absolute top-16 text-center z-40"
-          >
-            <motion.h2
-              initial={{ scale: 0.8 }}
-              animate={currentPhase >= 3 ? { scale: 1 } : {}}
-              transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
-              className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-gray-600 to-slate-700 mb-2"
-            >
-              🎨 ぬりえのせかいへ
-            </motion.h2>
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={currentPhase >= 3 ? { opacity: 1 } : {}}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="text-gray-600 text-lg"
-            >
-              あなたのいろでぬってみよう！
-            </motion.p>
-          </motion.div>
 
           {/* 周囲から舞い散る絵の具エフェクト */}
           {currentPhase >= 1 && (

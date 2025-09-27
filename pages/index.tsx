@@ -9,16 +9,23 @@ import {
   Palette,
   X,
   HelpCircle,
+  ArrowLeft,
 } from 'lucide-react';
 import SplashScreen from '@/components/SplashScreen';
+import TopPage from '@/components/TopPage';
 import ColorPicker from '@/components/ColorPicker';
 import { COLOR_CATEGORIES } from '@/constants/Colors';
 import { COLORINGMAP } from '@/constants/Image';
 import NavigationGuide from '@/components/NavigationGuide';
 
 type Tool = 'brush' | 'eraser' | 'fill' | 'pan';
+type AppState = 'splash' | 'top' | 'coloring';
 
 export default function Home() {
+  const [appState, setAppState] = useState<AppState>('splash');
+  const [selectedColoringId, setSelectedColoringId] = useState<string>('');
+
+  // 元のぬりえ機能のstate
   const [color, setColor] = useState('#FF5733');
   const [isDrawing, setIsDrawing] = useState(false);
   const [tool] = useState<Tool>('fill');
@@ -36,7 +43,6 @@ export default function Home() {
   const panStartRef = useRef({ x: 0, y: 0 });
   const lastPanRef = useRef({ x: 0, y: 0 });
   const [showColorPopup, setShowColorPopup] = useState(false);
-  const [showSplash, setShowSplash] = useState(true);
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [colors, setColors] = useState<string[]>(
     COLOR_CATEGORIES.spring.colors,
@@ -45,6 +51,22 @@ export default function Home() {
   const [showNavigationGuide, setShowNavigationGuide] = useState(false);
   const [colorMode, setColorMode] = useState<'seasonal' | 'recent'>('seasonal');
 
+  const handleSplashComplete = () => {
+    setAppState('top');
+  };
+
+  const handleSelectColoring = (coloringId: string) => {
+    setSelectedColoringId(coloringId);
+    setAppState('coloring');
+  };
+
+  const handleBackToTop = () => {
+    setAppState('top');
+  };
+
+  const currentColoring = COLORINGMAP[selectedColoringId as keyof typeof COLORINGMAP];
+
+  // 元のぬりえ機能をそのまま移植
   const saveState = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -471,13 +493,15 @@ export default function Home() {
 
   useEffect(() => {
     const hasSeenGuide = localStorage.getItem('hasSeenColoringGuide');
-    if (!hasSeenGuide && !showSplash) {
+    if (!hasSeenGuide && appState === 'coloring') {
       setShowNavigationGuide(true);
       localStorage.setItem('hasSeenColoringGuide', 'true');
     }
-  }, [showSplash]);
+  }, [appState]);
 
   useEffect(() => {
+    if (appState !== 'coloring' || !selectedColoringId) return;
+    
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -486,282 +510,296 @@ export default function Home() {
 
     const img = new window.Image();
     img.crossOrigin = 'anonymous';
-    img.src = COLORINGMAP['2'].path;
+    img.src = currentColoring.path;
 
     img.onload = () => {
-      // 元の画像サイズを保持
       const originalWidth = img.width;
       const originalHeight = img.height;
 
-      // キャンバスのサイズをデバイスピクセル比を考慮して設定
       canvas.width = originalWidth;
       canvas.height = originalHeight;
 
-      // 画像を描画
       ctx.drawImage(img, 0, 0, originalWidth, originalHeight);
 
-      // 初期状態を履歴に保存
       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
       setHistory([imageData]);
       setHistoryIndex(0);
 
-      // 初期スケールを調整（画面に合わせる）
       const canvasWrapper = canvasWrapperRef.current;
       if (canvasWrapper) {
         const wrapperWidth = canvasWrapper.clientWidth;
         const wrapperHeight = canvasWrapper.clientHeight;
 
-        // 幅と高さの両方に基づいてスケールを計算
         const scaleX = (wrapperWidth / canvas.width) * 0.9;
         const scaleY = (wrapperHeight / canvas.height) * 0.9;
 
-        // 小さい方のスケールを使用して、キャンバス全体が表示されるようにする
         const initialScale = Math.min(1.7, Math.min(scaleX, scaleY) * 2.5);
         setScale(initialScale);
 
-        // 中央に配置するためのパン位置を計算
         setPan({ x: 0, y: 0 });
       }
     };
-  }, []); // 依存配列を空にして初回のみ実行
+  }, [appState, selectedColoringId, currentColoring]);
+
+  const renderCurrentScreen = () => {
+    switch (appState) {
+      case 'splash':
+        return (
+          <SplashScreen
+            logoPath="/Origina-logo_tate.png"
+            onComplete={handleSplashComplete}
+          />
+        );
+      case 'top':
+        return <TopPage onSelectColoring={handleSelectColoring} />;
+      case 'coloring':
+        return (
+          <div className="min-h-screen bg-gray-100">
+            <div className="max-w-md mx-auto bg-white min-h-screen relative">
+              {/* ヘッダーツールバー */}
+              <div className="flex justify-between items-center p-3 bg-white border-b">
+                {/* 戻るボタン */}
+                <button
+                  onClick={handleBackToTop}
+                  className="flex items-center space-x-2 px-3 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
+                >
+                  <ArrowLeft className="w-5 h-5 text-gray-600" />
+                  <span className="text-sm text-gray-600">もどる</span>
+                </button>
+
+                {/* タイトル */}
+                <h2 className="text-lg font-semibold text-gray-800 text-center flex-1 mx-4">
+                  {currentColoring?.title || 'ぬりえ'}
+                </h2>
+
+                {/* 操作ボタン */}
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => setShowNavigationGuide(true)}
+                    className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center"
+                  >
+                    <HelpCircle className="w-5 h-5 text-gray-600" />
+                  </button>
+                  <button
+                    onClick={saveImage}
+                    className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center"
+                  >
+                    <Download className="w-5 h-5 text-gray-600" />
+                  </button>
+                </div>
+              </div>
+
+              {/* 操作ボタン行 */}
+              <div className="flex justify-center items-center p-3 space-x-2 bg-gray-50">
+                <button
+                  onClick={undo}
+                  onTouchStart={handleUndoTouch}
+                  disabled={historyIndex <= 0}
+                  className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                    historyIndex <= 0
+                      ? 'bg-gray-200 cursor-not-allowed'
+                      : 'bg-gray-300 active:bg-gray-400'
+                  }`}
+                >
+                  <ChevronLeft
+                    className={`w-6 h-6 ${historyIndex <= 0 ? 'text-gray-400' : 'text-gray-600'}`}
+                  />
+                </button>
+                <button
+                  onClick={redo}
+                  onTouchStart={handleRedoTouch}
+                  disabled={historyIndex >= history.length - 1}
+                  className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                    historyIndex >= history.length - 1
+                      ? 'bg-gray-200 cursor-not-allowed'
+                      : 'bg-gray-300 active:bg-gray-400'
+                  }`}
+                >
+                  <ChevronRight
+                    className={`w-6 h-6 ${historyIndex >= history.length - 1 ? 'text-gray-400' : 'text-gray-600'}`}
+                  />
+                </button>
+                <button
+                  onClick={() => {
+                    if (window.confirm('塗り絵を最初の状態に戻しますか？')) {
+                      reset();
+                    }
+                  }}
+                  onTouchStart={handleResetTouch}
+                  disabled={historyIndex === 0}
+                  className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                    historyIndex === 0
+                      ? 'bg-gray-200 cursor-not-allowed'
+                      : 'bg-gray-300 active:bg-gray-400'
+                  }`}
+                >
+                  <RotateCcw
+                    className={`w-6 h-6 ${historyIndex === 0 ? 'text-gray-400' : 'text-gray-600'}`}
+                  />
+                </button>
+              </div>
+
+              {/* キャンバス部分 */}
+              <div
+                ref={canvasWrapperRef}
+                className="relative w-full overflow-hidden h-[calc(60vh-120px)]"
+                onTouchStart={handlePinchZoomStart}
+                onTouchMove={handlePinchZoomMove}
+                onTouchEnd={handlePinchZoomEnd}
+                onTouchCancel={handlePinchZoomEnd}
+              >
+                <div
+                  className="min-w-[100%] flex justify-center items-center h-full"
+                  style={{
+                    transform: `translate(${pan.x}px, ${pan.y}px)`,
+                    transition:
+                      isPanning || isZooming ? 'none' : 'transform 0.1s ease-out',
+                    willChange: 'transform',
+                  }}
+                >
+                  <canvas
+                    ref={canvasRef}
+                    onMouseDown={startDrawing}
+                    onMouseMove={draw}
+                    onMouseUp={stopDrawing}
+                    onMouseOut={stopDrawing}
+                    onTouchStart={startDrawing}
+                    onTouchMove={draw}
+                    onTouchEnd={stopDrawing}
+                    className="touch-none"
+                    style={{
+                      transform: `scale(${scale})`,
+                      transformOrigin: 'center center',
+                      transition: isZooming ? 'none' : 'transform 0.1s ease-out',
+                      willChange: 'transform',
+                      maxWidth: '100%',
+                      height: 'auto',
+                      imageRendering: 'pixelated',
+                      WebkitFontSmoothing: 'none',
+                      MozOsxFontSmoothing: 'grayscale',
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* カラーパレット */}
+              <div className="flex justify-center p-3 border-t bg-white">
+                <button
+                  onClick={handleOpenColorPalette}
+                  className="w-10 h-10 rounded-full mx-1 flex items-center justify-center bg-gray-200"
+                  aria-label="カラーパレットを開く"
+                >
+                  <Palette className="w-6 h-6 text-gray-600" />
+                </button>
+
+                {colorMode === 'seasonal'
+                  ? colors.map((colorOption, index) => (
+                      <button
+                        key={`seasonal-${index}`}
+                        onClick={() => setColor(colorOption)}
+                        className={`w-10 h-10 rounded-full mx-1 transition-transform ${
+                          color === colorOption
+                            ? 'scale-110 ring-2 ring-gray-400'
+                            : ''
+                        }`}
+                        style={{
+                          backgroundColor: colorOption,
+                          border:
+                            colorOption === '#FFFFFF' ? '1px solid #ddd' : 'none',
+                        }}
+                      />
+                    ))
+                  : recentColors.map((recentColor, index) => (
+                      <button
+                        key={`recent-${index}`}
+                        onClick={() => handleSelectColor(recentColor)}
+                        className={`w-10 h-10 rounded-full mx-1 transition-transform ${
+                          color === recentColor
+                            ? 'scale-110 ring-2 ring-gray-400'
+                            : ''
+                        }`}
+                        style={{
+                          backgroundColor: recentColor,
+                          border:
+                            recentColor === '#FFFFFF' ? '1px solid #ddd' : 'none',
+                        }}
+                      />
+                    ))}
+              </div>
+
+              {/* カラーポップアップ */}
+              {showColorPopup && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end justify-center">
+                  <div
+                    className="bg-white rounded-t-xl w-full max-w-md p-5 transform transition-all duration-300 ease-out animate-slide-up"
+                    style={{ height: '60vh' }}
+                  >
+                    <div className="flex justify-between items-center mb-6">
+                      <h3 className="text-xl font-semibold">Originaパレット</h3>
+                      <button
+                        onClick={() => setShowColorPopup(false)}
+                        className="p-2 rounded-full hover:bg-gray-100"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
+
+                    <div
+                      className="space-y-3 overflow-y-auto"
+                      style={{ maxHeight: 'calc(60vh - 120px)' }}
+                    >
+                      {Object.entries(COLOR_CATEGORIES).map(([key, category]) => (
+                        <button
+                          key={key}
+                          onClick={() =>
+                            handleSelectCategory(key as keyof typeof COLOR_CATEGORIES)
+                          }
+                          className="w-full py-4 px-6 text-left text-lg font-medium hover:bg-gray-100 rounded-md transition-colors flex justify-between items-center"
+                        >
+                          <span>{category.name}</span>
+                          <span className="text-gray-400">▶</span>
+                        </button>
+                      ))}
+
+                      <button
+                        onClick={handleSelectOriginal}
+                        className="w-full py-4 px-6 text-left text-lg font-medium hover:bg-gray-100 rounded-md transition-colors flex justify-between items-center"
+                      >
+                        <span>Original</span>
+                        <span className="text-gray-400">▶</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <ColorPicker
+                isOpen={showColorPicker}
+                onClose={() => setShowColorPicker(false)}
+                onSelectColor={handleColorPickerSelect}
+                initialColor={color}
+              />
+
+              <NavigationGuide
+                isOpen={showNavigationGuide}
+                onClose={() => setShowNavigationGuide(false)}
+              />
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div>
       <Head>
         <title>Originaのぬりえ</title>
         <meta name="description" content="オリジナルの塗り絵を楽しもう" />
       </Head>
 
-      {/* スプラッシュ画面 */}
-      {showSplash && (
-        <SplashScreen
-          logoPath="/Origina-logo_tate.png"
-          onComplete={() => setShowSplash(false)}
-        />
-      )}
-
-      <div className="max-w-md mx-auto bg-white min-h-screen relative">
-        {/* ヘッダーツールバー */}
-        <div className="flex justify-between items-center p-3">
-          <div className="flex space-x-2">
-            <button
-              onClick={undo}
-              onTouchStart={handleUndoTouch}
-              disabled={historyIndex <= 0}
-              className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                historyIndex <= 0
-                  ? 'bg-gray-200 cursor-not-allowed'
-                  : 'bg-gray-300 active:bg-gray-400'
-              }`}
-            >
-              <ChevronLeft
-                className={`w-6 h-6 ${historyIndex <= 0 ? 'text-gray-400' : 'text-gray-600'}`}
-              />
-            </button>
-            <button
-              onClick={redo}
-              onTouchStart={handleRedoTouch}
-              disabled={historyIndex >= history.length - 1}
-              className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                historyIndex >= history.length - 1
-                  ? 'bg-gray-200 cursor-not-allowed'
-                  : 'bg-gray-300 active:bg-gray-400'
-              }`}
-            >
-              <ChevronRight
-                className={`w-6 h-6 ${historyIndex >= history.length - 1 ? 'text-gray-400' : 'text-gray-600'}`}
-              />
-            </button>
-            <button
-              onClick={() => {
-                if (window.confirm('塗り絵を最初の状態に戻しますか？')) {
-                  reset();
-                }
-              }}
-              onTouchStart={handleResetTouch}
-              disabled={historyIndex === 0}
-              className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                historyIndex === 0
-                  ? 'bg-gray-200 cursor-not-allowed'
-                  : 'bg-gray-300 active:bg-gray-400'
-              }`}
-            >
-              <RotateCcw
-                className={`w-6 h-6 ${historyIndex === 0 ? 'text-gray-400' : 'text-gray-600'}`}
-              />
-            </button>
-          </div>
-          <div className="flex space-x-2">
-            <button
-              onClick={() => setShowNavigationGuide(true)}
-              className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center"
-            >
-              <HelpCircle className="w-6 h-6 text-gray-600" />
-            </button>
-            <button
-              onClick={saveImage}
-              className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center"
-            >
-              <Download className="w-6 h-6 text-gray-600" />
-            </button>
-          </div>
-        </div>
-
-        {/* キャンバス部分 - 高さだけ調整 */}
-        <div
-          ref={canvasWrapperRef}
-          className="relative w-full overflow-hidden h-[calc(75vh-120px)]"
-          onTouchStart={handlePinchZoomStart}
-          onTouchMove={handlePinchZoomMove}
-          onTouchEnd={handlePinchZoomEnd}
-          onTouchCancel={handlePinchZoomEnd}
-        >
-          <div
-            className="min-w-[100%] flex justify-center items-center h-full"
-            style={{
-              transform: `translate(${pan.x}px, ${pan.y}px)`,
-              transition:
-                isPanning || isZooming ? 'none' : 'transform 0.1s ease-out',
-              willChange: 'transform',
-            }}
-          >
-            <canvas
-              ref={canvasRef}
-              onMouseDown={startDrawing}
-              onMouseMove={draw}
-              onMouseUp={stopDrawing}
-              onMouseOut={stopDrawing}
-              onTouchStart={startDrawing}
-              onTouchMove={draw}
-              onTouchEnd={stopDrawing}
-              className="touch-none"
-              style={{
-                transform: `scale(${scale})`,
-                transformOrigin: 'center center',
-                transition: isZooming ? 'none' : 'transform 0.1s ease-out',
-                willChange: 'transform',
-                maxWidth: '100%',
-                height: 'auto',
-                imageRendering: 'pixelated',
-                WebkitFontSmoothing: 'none',
-                MozOsxFontSmoothing: 'grayscale',
-              }}
-            />
-          </div>
-        </div>
-
-        {/* カラーパレット */}
-        <div className="flex justify-center p-3 border-t">
-          <button
-            onClick={handleOpenColorPalette}
-            className="w-10 h-10 rounded-full mx-1 flex items-center justify-center bg-gray-200"
-            aria-label="カラーパレットを開く"
-          >
-            <Palette className="w-6 h-6 text-gray-600" />
-          </button>
-
-          {/* 季節カラーまたは最近使用した色を表示 */}
-          {colorMode === 'seasonal'
-            ? colors.map((colorOption, index) => (
-                <button
-                  key={`seasonal-${index}`}
-                  onClick={() => setColor(colorOption)}
-                  className={`w-10 h-10 rounded-full mx-1 transition-transform ${
-                    color === colorOption
-                      ? 'scale-110 ring-2 ring-gray-400'
-                      : ''
-                  }`}
-                  style={{
-                    backgroundColor: colorOption,
-                    border:
-                      colorOption === '#FFFFFF' ? '1px solid #ddd' : 'none',
-                  }}
-                  aria-label={`色を${colorOption}に変更`}
-                />
-              ))
-            : recentColors.map((recentColor, index) => (
-                <button
-                  key={`recent-${index}`}
-                  onClick={() => handleSelectColor(recentColor)}
-                  className={`w-10 h-10 rounded-full mx-1 transition-transform ${
-                    color === recentColor
-                      ? 'scale-110 ring-2 ring-gray-400'
-                      : ''
-                  }`}
-                  style={{
-                    backgroundColor: recentColor,
-                    border:
-                      recentColor === '#FFFFFF' ? '1px solid #ddd' : 'none',
-                  }}
-                  aria-label={`最近使用した色${recentColor}に変更`}
-                />
-              ))}
-        </div>
-
-        {/* 下部の余白を追加 */}
-        <div className="h-4"></div>
-
-        {/* カラーポップアップ */}
-        {showColorPopup && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end justify-center">
-            <div
-              className="bg-white rounded-t-xl w-full max-w-md p-5 transform transition-all duration-300 ease-out animate-slide-up"
-              style={{ height: '60vh' }}
-            >
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-semibold">Originaパレット</h3>
-                <button
-                  onClick={() => setShowColorPopup(false)}
-                  className="p-2 rounded-full hover:bg-gray-100"
-                  aria-label="閉じる"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              <div
-                className="space-y-3 overflow-y-auto"
-                style={{ maxHeight: 'calc(60vh - 120px)' }}
-              >
-                {Object.entries(COLOR_CATEGORIES).map(([key, category]) => (
-                  <button
-                    key={key}
-                    onClick={() =>
-                      handleSelectCategory(key as keyof typeof COLOR_CATEGORIES)
-                    }
-                    className="w-full py-4 px-6 text-left text-lg font-medium hover:bg-gray-100 rounded-md transition-colors flex justify-between items-center"
-                  >
-                    <span>{category.name}</span>
-                    <span className="text-gray-400">▶</span>
-                  </button>
-                ))}
-
-                <button
-                  onClick={handleSelectOriginal}
-                  className="w-full py-4 px-6 text-left text-lg font-medium hover:bg-gray-100 rounded-md transition-colors flex justify-between items-center"
-                >
-                  <span>Original</span>
-                  <span className="text-gray-400">▶</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* カラーピッカー */}
-        <ColorPicker
-          isOpen={showColorPicker}
-          onClose={() => setShowColorPicker(false)}
-          onSelectColor={handleColorPickerSelect}
-          initialColor={color}
-        />
-
-        {/* 操作ガイド */}
-        <NavigationGuide
-          isOpen={showNavigationGuide}
-          onClose={() => setShowNavigationGuide(false)}
-        />
-      </div>
+      {renderCurrentScreen()}
     </div>
   );
 }

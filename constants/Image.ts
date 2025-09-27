@@ -1,22 +1,26 @@
 export const COLORINGMAP = {
-  '1': {
-    path: '/IMG_2691.PNG',
-    title: 'JPG表紙イラスト',
+  'human': {
+    path: '/human.png',
+    title: 'ひと',
+    description: 'かわいい人に色をつけよう',
+    thumbnail: '/human.png',
+    difficulty: 'easy' as const,
+    category: 'human' as const,
   },
-  '2': {
-    path: '/IMG_2691.PNG',
-    title: 'ぬりえイラスト',
+  'flower': {
+    path: '/flower.png',
+    title: 'はな',
+    description: 'きれいな花に色をつけよう',
+    thumbnail: '/flower.png',
+    difficulty: 'easy' as const,
+    category: 'flower' as const,
   },
-  '3': {
-    path: '/IMG_2691.PNG',
-    title: 'PNG背景白あり',
-  },
-  '4': {
-    path: '/IMG_2691.PNG',
-    title: 'PNG背景透過',
-  },
-  '5': {
-    path: '/IMG_2691.PNG',
-    title: 'PNG実践クッキリ背景透過',
+  'building': {
+    path: '/building.png',
+    title: 'たてもの',
+    description: 'すてきな建物に色をつけよう',
+    thumbnail: '/building.png',
+    difficulty: 'easy' as const,
+    category: 'building' as const,
   },
 } as const;

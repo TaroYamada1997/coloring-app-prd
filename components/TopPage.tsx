@@ -30,7 +30,7 @@ const TopPage: React.FC<TopPageProps> = ({ onSelectColoring }) => {
           className="inline-flex items-center justify-center mb-3"
         >
           <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-gray-700 to-slate-800">
-            ぬりえをえらぼう
+            しろくろタウンで遊ぼう！
           </h1>
         </motion.div>
         <motion.p
@@ -39,7 +39,7 @@ const TopPage: React.FC<TopPageProps> = ({ onSelectColoring }) => {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="text-gray-600 text-base"
         >
-          すきなカテゴリをタッチしてね！
+          好きなぬりえをえらんでね！
         </motion.p>
       </motion.header>
 
